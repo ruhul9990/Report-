@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabric Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(120deg, #f6f9fc, #e3f2fd);
+      padding: 20px;
+      color: #333;
+    }
+    h2 {
+      color: #2d3436;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .table-container {
+      overflow-x: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+      text-transform: capitalize;
+    }
+    table, th, td {
+      border: 1px solid #dee2e6;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Fabric Report Form</h2>
+  <form id="fabricForm">
+    <input type="date" placeholder="Date" name="Date" required />
+    <input type="text" placeholder="Buyer" name="Buyer" required />
+    <input type="text" placeholder="Style" name="Style" />
+    <input type="text" placeholder="Color" name="Color" />
+    <input type="text" placeholder="Lot" name="Lot" />
+    <input type="text" placeholder="Fabric Type" name="Fabric Type" />
+    <input type="number" step="any" placeholder="Fabric KG" name="Fabric KG" />
+    <input type="number" placeholder="Roll" name="Roll" />
+    <input type="text" placeholder="Dia" name="Dia" />
+    <input type="number" placeholder="GSM" name="GSM" />
+    <input type="number" step="any" placeholder="Rib KG" name="Rib KG" />
+    <button type="submit" class="btn">➕ Add Entry</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 10px;">
+    <button onclick="downloadExcel()" class="btn">⬇️ Download Excel</button>
+  </div>
+
+  <div class="table-container">
+    <table id="reportTable">
+      <thead>
+        <tr></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const form = document.getElementById("fabricForm");
+    const tableBody = document.querySelector("#reportTable tbody");
+    const theadRow = document.querySelector("#reportTable thead tr");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      const row = document.createElement("tr");
+
+      if (theadRow.children.length === 0) {
+        for (const key of data.keys()) {
+          const th = document.createElement("th");
+          th.textContent = key;
+          theadRow.appendChild(th);
+        }
+      }
+
+      for (const val of data.values()) {
+        const td = document.createElement("td");
+        td.textContent = val;
+        row.appendChild(td);
+      }
+      tableBody.appendChild(row);
+      form.reset();
+    });
+
+    function downloadExcel() {
+      const table = document.getElementById("reportTable");
+      const workbook = XLSX.utils.table_to_book(table, { sheet: "Fabric Report" });
+      XLSX.writeFile(workbook, "fabric_report.xlsx");
+    }
+  </script>
+
+</body>
+</html>
